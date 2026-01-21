@@ -18,6 +18,8 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.security.SignatureException;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -43,9 +45,13 @@ public class JWTTokenProvider {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + jwtExpiration);
 
+        List<String> roles = user.getRoles().stream()
+                .map(Enum::name)
+                .collect(Collectors.toList());
+
         return Jwts.builder()
                 .subject(user.getCpf())
-                .claim("role", user.getRole().name())
+                .claim("roles", roles)
                 .issuer(jwtIssuer)
                 .issuedAt(now)
                 .expiration(expiration)
@@ -101,8 +107,8 @@ public class JWTTokenProvider {
         return parseToken(token).getSubject();
     }
 
-    public String getRoleFromToken(String token) {
-        return parseToken(token).get("role", String.class);
+    public List<String> getRolesFromToken(String token) {
+        return parseToken(token).get("roles", List.class);
     }
 
 }

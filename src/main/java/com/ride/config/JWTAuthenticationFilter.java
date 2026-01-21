@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,13 +35,17 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
             if (jwtUtil.validateToken(token)) {
                 String cpf = jwtUtil.getCpfFromToken(token);
-                String role = jwtUtil.getRoleFromToken(token);
+                List<String> roles = jwtUtil.getRolesFromToken(token);
 
                 if (cpf != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    String[] authorities = roles.stream()
+                            .map(role -> "ROLE_" + role)
+                            .toArray(String[]::new);
+
                     UserDetails userDetails = User
                             .withUsername(cpf)
                             .password("")
-                            .authorities("ROLE_" + role)
+                            .authorities(authorities)
                             .build();
 
                     UsernamePasswordAuthenticationToken authToken =

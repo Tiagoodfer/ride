@@ -39,10 +39,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/**", "/oauth/google/callback", "/webhooks/stripe",
-                                "/swagger-ui.html", "/swagger-ui/**",
+                                "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**",
                                 "/webjars/swagger-ui/**"
                         ).permitAll()
-                        .requestMatchers("/swagger-ui.html", "/swagger/api-docs/**", "/nutrisync-swagger/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -56,7 +55,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
-        configuration.setAllowCredentials(true);
+        configuration.setAllowCredentials(false); // allowCredentials(true) não funciona com allowedOrigins("*")
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
