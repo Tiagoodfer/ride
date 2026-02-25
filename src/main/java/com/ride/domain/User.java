@@ -17,16 +17,18 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @ToString
@@ -35,14 +37,12 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "users")
 public class User {
 
     @Id
-    @EqualsAndHashCode.Include
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column
     private String name;
@@ -54,6 +54,7 @@ public class User {
     private String cpf;
 
     @Column
+    @ToString.Exclude
     private String passwordHash;
 
     @Column(name = "image_url")
@@ -73,6 +74,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     @Builder.Default
+    @ToString.Exclude
     private Set<UserRole> roles = new HashSet<>();
 
     @Column(name = "created_at")
@@ -88,10 +90,30 @@ public class User {
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-        if (balance == null) {
-            balance = BigDecimal.ZERO;
-            status = UserStatus.ACTIVE;
-        }
+        if (balance == null) balance = BigDecimal.ZERO;
+        if (status == null) status = UserStatus.ACTIVE;
     }
 
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ?
+                ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() :
+                o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ?
+                ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() :
+                this.getClass();
+        if (thisEffectiveClass != oEffectiveClass)
+            return false;
+        User user = (User) o;
+        return getId() != null && Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ?
+                ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() :
+                getClass().hashCode();
+    }
 }

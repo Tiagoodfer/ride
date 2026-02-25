@@ -15,14 +15,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -48,7 +46,10 @@ public class Transaction {
     private String reason;
 
     @Column(name = "reference_id")
-    private Long referenceId; // rideId, payoutId, etc.
+    private Long referenceId;
+
+    @Column(name = "reference_type")
+    private String referenceType;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
