@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -144,7 +145,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void addRoleInfluencer(Long userId) {
+    public void addRoleInfluencer(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId));
 

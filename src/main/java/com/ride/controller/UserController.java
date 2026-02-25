@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,10 +33,10 @@ public class UserController {
 
     @Operation(summary = "Add phone number to a user")
     @SecurityRequirement(name = "bearerAuth")
-    @PostMapping("/addphonenumber/{id}")
-    public void addPhoneNumber(@PathVariable Long id, @RequestBody UserPhoneNumberRequestDTO phoneNumber) {
+    @PostMapping("/addphonenumber")
+    public void addPhoneNumber(@RequestBody UserPhoneNumberRequestDTO phoneNumber) {
         log.info("Add Phone Number: {}", phoneNumber);
-        userService.updateUserAddPhoneNumber(id, phoneNumber);
+        userService.updateUserAddPhoneNumber(phoneNumber);
     }
 
     @Operation(summary = "Get all users (Admin only)")

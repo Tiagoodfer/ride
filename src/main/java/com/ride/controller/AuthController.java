@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
 @Slf4j
 @RestController
 @RequestMapping("/auth")
@@ -81,7 +83,7 @@ public class AuthController {
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/role/influencer/{userId}")
-    public ResponseEntity<Void> addRoleInfluencer(@PathVariable Long userId) {
+    public ResponseEntity<Void> addRoleInfluencer(@PathVariable UUID userId) {
         log.info("Adding Influencer role to user ID: {}", userId);
         authService.addRoleInfluencer(userId);
         return ResponseEntity.ok().build();

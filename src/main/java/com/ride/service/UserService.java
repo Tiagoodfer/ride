@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -39,9 +40,9 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUserAddPhoneNumber(Long id, UserPhoneNumberRequestDTO phoneNumber) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+    public void updateUserAddPhoneNumber(UserPhoneNumberRequestDTO phoneNumber) {
+        User user = userRepository.findById(phoneNumber.id())
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + phoneNumber.id()));
 
         user.setPhoneNumber(phoneNumber.phoneNumber());
         userRepository.save(user);
